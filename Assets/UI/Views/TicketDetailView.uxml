@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <!-- Template embedding for the header -->
+    <ui:Template name="Header" src="project://database/Assets/UI/Components/HeaderView.uxml" />
+
+    <ui:Style src="project://database/Assets/UI/Styles/GlobalStyle.uss" />
+
+    <ui:VisualElement class="screen-container">
+        <!-- Inject Header -->
+        <ui:Instance template="Header" name="GlobalHeader" />
+
+        <ui:VisualElement style="flex-direction: row; flex-grow: 1; padding-top: 16px;">
+            
+            <!-- Left Panel: Ticket Details & AI Review -->
+            <ui:ScrollView style="flex-grow: 2; margin-right: 16px;" class="panel">
+                <ui:Label name="LblTicketTitle" text="Ticket Title Loading..." class="text-heading" />
+                
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 24px;">
+                    <ui:Label name="LblStatus" text="[Status]" class="text-sub" style="color: #1E5128; font-weight: bold; margin-right: 8px;" />
+                    <ui:Label name="LblAuthor" text="Author: --" class="text-sub" style="margin-right: 16px;" />
+                    <ui:Label name="LblCreatedAt" text="Date: --" class="text-sub" />
+                </ui:VisualElement>
+
+                <ui:Label text="Description" class="text-sub" style="font-weight: bold;" />
+                <ui:Label name="LblDescription" text="Description loading..." style="margin-bottom: 16px;" />
+
+                <ui:Label text="Code Difference (.diff)" class="text-sub" style="font-weight: bold;" />
+                <ui:VisualElement style="background-color: #1E1E1E; border-color: #3E3E42; border-width: 1px; padding: 8px; margin-bottom: 24px;">
+                    <ui:Label name="LblDiffContent" text="diff loading..." style="white-space: normal;" />
+                </ui:VisualElement>
+
+                <ui:Label text="AI Review Summary" class="text-sub" style="font-weight: bold;" />
+                <ui:VisualElement style="background-color: #2D2D30; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                    <ui:Label name="LblAiSummary" text="AI Review loading..." />
+                </ui:VisualElement>
+            </ui:ScrollView>
+
+            <!-- Right Panel: Chat -->
+            <ui:VisualElement style="flex-grow: 1; width: 300px;" class="panel">
+                <ui:Label text="Chat with AI" class="text-heading" style="font-size: 18px;" />
+                
+                <ui:ScrollView name="ScvChatMessages" style="flex-grow: 1; margin-bottom: 8px; border-color: #3E3E42; border-width: 1px; border-radius: 4px; padding: 4px;">
+                    <!-- Chat messages will be dynamically added here -->
+                </ui:ScrollView>
+
+                <ui:VisualElement style="flex-direction: row;">
+                    <ui:TextField name="TxtMessage" class="input-field" style="flex-grow: 1; margin-right: 8px;" />
+                    <ui:Button name="BtnSendMsg" text="Send" class="btn-primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>

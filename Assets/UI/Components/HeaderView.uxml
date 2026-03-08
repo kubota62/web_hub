@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <!-- We can rely on GlobalStyle.uss being loaded by the parent view, but we'll import it just in case -->
+    <ui:Style src="project://database/Assets/UI/Styles/GlobalStyle.uss" />
+
+    <ui:VisualElement name="HeaderContainer" class="header">
+        
+        <!-- Logo / Title -->
+        <ui:VisualElement style="flex-direction: row; align-items: center;">
+            <ui:Label text="AI CodeReview" class="text-title" style="margin-bottom: 0;" />
+        </ui:VisualElement>
+
+        <!-- Navigation Actions -->
+        <ui:VisualElement style="flex-direction: row; align-items: center;">
+            <ui:Button name="BtnHome" text="Home" class="btn-secondary" style="margin-right: 8px;" />
+            <ui:Button name="BtnNewTicket" text="New Ticket" class="btn-primary" style="margin-right: 16px;" />
+            
+            <ui:VisualElement style="width: 1px; height: 24px; background-color: #3E3E42; margin-right: 16px;" />
+            
+            <!-- User Info Placeholder -->
+            <ui:Label name="LblUsername" text="Guest" class="text-sub" style="margin-right: 8px; font-weight: bold;" />
+            <ui:Button name="BtnLogout" text="Logout" class="btn-secondary" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>

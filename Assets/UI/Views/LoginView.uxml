@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <ui:Style src="project://database/Assets/UI/Styles/GlobalStyle.uss" />
+
+    <ui:VisualElement style="flex-grow: 1; align-items: center; justify-content: center; background-color: #1E1E1E;">
+        
+        <ui:VisualElement class="auth-panel">
+            <ui:Label text="AI CodeReview" class="text-title" style="align-self: center;" />
+            <ui:Label text="Sign in to continue" class="text-sub" style="align-self: center; margin-bottom: 24px;" />
+
+            <ui:Label text="Username" class="text-sub" style="margin-bottom: 4px;" />
+            <ui:TextField name="TxtUsername" class="input-field" style="margin-bottom: 16px;" />
+
+            <ui:Label text="Password" class="text-sub" style="margin-bottom: 4px;" />
+            <ui:TextField name="TxtPassword" password="true" class="input-field" style="margin-bottom: 32px;" />
+
+            <ui:Button name="BtnLogin" text="Login" class="btn-primary" style="padding: 16px; margin-bottom: 16px;" />
+            <ui:Button name="BtnShowRegister" text="Create Account" class="btn-secondary" style="padding: 12px; margin-bottom: 8px;" />
+            
+            <ui:Label name="LblError" text="" class="text-sub" style="color: #F85149; margin-top: 8px; align-self: center;" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+    <!-- Modal for User Registration (Hidden by default) -->
+    <ui:VisualElement name="ModalRegister" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; display: none;">
+        <ui:VisualElement class="auth-panel">
+            <ui:Label text="Create an Account" class="text-heading" style="align-self: center; margin-bottom: 24px; font-size: 20px;" />
+
+            <ui:Label text="New Username" class="text-sub" style="margin-bottom: 4px;" />
+            <ui:TextField name="TxtRegUsername" class="input-field" style="margin-bottom: 16px;" />
+
+            <ui:Label text="New Password" class="text-sub" style="margin-bottom: 4px;" />
+            <ui:TextField name="TxtRegPassword" password="true" class="input-field" style="margin-bottom: 32px;" />
+
+            <ui:Label name="LblRegError" text="" class="text-sub" style="color: #F85149; margin-bottom: 16px; align-self: center;" />
+
+            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                <ui:Button name="BtnCancelRegister" text="Cancel" class="btn-secondary" style="width: 45%; padding: 12px;" />
+                <ui:Button name="BtnRegister" text="Sign Up" class="btn-primary" style="width: 45%; padding: 12px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+</ui:UXML>
