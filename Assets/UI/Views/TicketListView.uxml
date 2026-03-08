@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <!-- Template embedding for the header -->
+    <ui:Template name="Header" src="project://database/Assets/UI/Components/HeaderView.uxml" />
+
+    <ui:Style src="project://database/Assets/UI/Styles/GlobalStyle.uss" />
+
+    <ui:VisualElement class="screen-container">
+        
+        <!-- Inject Header -->
+        <ui:Instance template="Header" name="GlobalHeader" />
+
+        <ui:VisualElement class="ticket-dashboard">
+            <ui:VisualElement class="ticket-header-row">
+                <ui:Label text="Ticket Dashboard" class="text-heading" style="margin-bottom: 0;" />
+                <ui:Button name="BtnCreateTicket" text="+ Create Review Request" class="btn-primary" />
+            </ui:VisualElement>
+
+            <!-- Ticket List container (ScrollView) -->
+            <ui:ScrollView name="ScvTicketList" class="panel" style="flex-grow: 1;">
+                <!-- Ticket items will be dynamically injected here -->
+            </ui:ScrollView>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>

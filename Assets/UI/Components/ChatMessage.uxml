@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <!-- Use inline styles or minimal classes since it relies on global -->
+    <ui:VisualElement name="MsgContainer" style="margin-bottom: 8px; max-width: 80%;">
+        <ui:Label name="LblSender" text="Sender" style="font-size: 10px; color: #9E9E9E; margin-bottom: 2px;" />
+        <ui:VisualElement name="Bubble" style="background-color: #0E639C; border-radius: 6px; padding: 6px 10px;">
+            <ui:Label name="LblContent" text="Message content" style="white-space: normal; color: white;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+</ui:UXML>

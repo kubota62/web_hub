@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <ui:Style src="project://database/Assets/UI/Styles/GlobalStyle.uss" />
+
+    <ui:VisualElement class="panel" style="flex-direction: row; justify-content: space-between; align-items: center;">
+        
+        <ui:VisualElement>
+            <ui:Label name="LblTitle" text="Ticket Title Placeholder" class="text-title" style="font-size: 18px; margin-bottom: 4px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label name="LblStatus" text="[Open]" class="text-sub" style="color: #1E5128; font-weight: bold; margin-right: 8px;" />
+                <ui:Label name="LblCreatedAt" text="2026-03-07" class="text-sub" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:Button name="BtnView" text="View Details" class="btn-secondary" />
+
+    </ui:VisualElement>
+
+</ui:UXML>
