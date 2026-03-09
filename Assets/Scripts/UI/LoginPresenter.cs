@@ -5,10 +5,11 @@ using AIRegistry.Network;
 
 namespace AIRegistry.Frontend.Controllers
 {
+    /// <summary>
+    /// ログイン画面とユーザー登録画面のロジックを管理するプレゼンタークラスです。
+    /// </summary>
     public class LoginPresenter : MonoBehaviour
     {
-        [SerializeField] private VisualTreeAsset _ticketListViewAsset;
-
         private VisualElement _root;
         private TextField _txtUsername;
         private TextField _txtPassword;
@@ -16,7 +17,6 @@ namespace AIRegistry.Frontend.Controllers
         private Button _btnShowRegister;
         private Label _lblError;
 
-        // Registration Modal UI
         private VisualElement _modalRegister;
         private TextField _txtRegUsername;
         private TextField _txtRegPassword;
@@ -24,9 +24,14 @@ namespace AIRegistry.Frontend.Controllers
         private Button _btnRegister;
         private Label _lblRegError;
 
+        /// <summary>
+        /// ログイン画面の初期化処理を行い、UI要素の参照とイベント登録を完了させます。
+        /// </summary>
+        /// <param name="root">画面のルート要素</param>
         public void Initialize(VisualElement root)
         {
             _root = root;
+            
             _txtUsername = _root.Q<TextField>("TxtUsername");
             _txtPassword = _root.Q<TextField>("TxtPassword");
             _btnLogin = _root.Q<Button>("BtnLogin");
@@ -45,8 +50,6 @@ namespace AIRegistry.Frontend.Controllers
                 _btnLogin.clicked -= OnLoginClicked;
                 _btnLogin.clicked += OnLoginClicked;
             }
-            else
-                Debug.LogError("LoginPresenter: Login Button not found in XML!");
 
             if (_btnShowRegister != null)
             {
@@ -67,6 +70,9 @@ namespace AIRegistry.Frontend.Controllers
             }
         }
 
+        /// <summary>
+        /// オブジェクトが無効になった際のイベント解除等、クリーンアップを行います。
+        /// </summary>
         private void OnDisable()
         {
             if (_btnLogin != null) _btnLogin.clicked -= OnLoginClicked;
@@ -75,6 +81,9 @@ namespace AIRegistry.Frontend.Controllers
             if (_btnRegister != null) _btnRegister.clicked -= OnRegisterClicked;
         }
 
+        /// <summary>
+        /// ログインボタンがクリックされた際の認証処理です。
+        /// </summary>
         private void OnLoginClicked()
         {
             string username = _txtUsername.value;
@@ -82,11 +91,11 @@ namespace AIRegistry.Frontend.Controllers
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                _lblError.text = "Username and password cannot be empty.";
+                _lblError.text = "ユーザー名とパスワードを入力してください。";
                 return;
             }
 
-            _lblError.text = "Logging in...";
+            _lblError.text = "ログイン中...";
             _btnLogin.SetEnabled(false);
 
             ApiClient.Instance.Login(username, password, (success, user) =>
@@ -95,22 +104,19 @@ namespace AIRegistry.Frontend.Controllers
                 if (success)
                 {
                     _lblError.text = "";
-                    Debug.Log($"Logged in as {user.Username}!");
-                    
-                    // AppFlowManager経由で初期化済みのTicketListPresenterに遷移を依頼する
-                    var listPresenter = FindObjectOfType<TicketListPresenter>();
-                    if (listPresenter != null)
-                    {
-                        listPresenter.GoToList();
-                    }
+                    // AppFlowManagerに遷移を依頼
+                    AppFlowManager.Instance.GoToTicketList();
                 }
                 else
                 {
-                    _lblError.text = "Login failed. Invalid credentials.";
+                    _lblError.text = "ログインに失敗しました。";
                 }
             });
         }
 
+        /// <summary>
+        /// ユーザー登録用のモーダルを表示します。
+        /// </summary>
         private void ShowRegisterModal()
         {
             if (_modalRegister != null)
@@ -122,14 +128,17 @@ namespace AIRegistry.Frontend.Controllers
             }
         }
 
+        /// <summary>
+        /// ユーザー登録用モーダルを非表示にします。
+        /// </summary>
         private void HideRegisterModal()
         {
-            if (_modalRegister != null)
-            {
-                _modalRegister.style.display = DisplayStyle.None;
-            }
+            if (_modalRegister != null) _modalRegister.style.display = DisplayStyle.None;
         }
 
+        /// <summary>
+        /// ユーザー登録実行ボタンが押された際の処理です。
+        /// </summary>
         private void OnRegisterClicked()
         {
             string username = _txtRegUsername.value;
@@ -137,11 +146,11 @@ namespace AIRegistry.Frontend.Controllers
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                _lblRegError.text = "Username and password cannot be empty.";
+                _lblRegError.text = "すべての項目を入力してください。";
                 return;
             }
 
-            _lblRegError.text = "Registering...";
+            _lblRegError.text = "登録中...";
             _btnRegister.SetEnabled(false);
 
             ApiClient.Instance.Register(username, password, (success, user) =>
@@ -149,12 +158,12 @@ namespace AIRegistry.Frontend.Controllers
                 _btnRegister.SetEnabled(true);
                 if (success)
                 {
-                    Debug.Log($"Successfully registered and logged in as {user.Username}!");
-                    FindObjectOfType<TicketListPresenter>()?.GoToList();
+                    // 登録成功後もAppFlowManagerに遷移を依頼
+                    AppFlowManager.Instance.GoToTicketList();
                 }
                 else
                 {
-                    _lblRegError.text = "Registration failed. Try different credentials.";
+                    _lblRegError.text = "登録に失敗しました。";
                 }
             });
         }

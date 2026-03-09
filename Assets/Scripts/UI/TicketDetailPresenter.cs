@@ -6,16 +6,18 @@ using AIRegistry.Models;
 
 namespace AIRegistry.Frontend.Controllers
 {
+    /// <summary>
+    /// チケット詳細表示とチャット機能を管理するプレゼンタークラスです。
+    /// </summary>
     public class TicketDetailPresenter : MonoBehaviour
     {
-        [SerializeField] private VisualTreeAsset _ticketListViewAsset;
+        [Header("Assets")]
         [SerializeField] private VisualTreeAsset _chatMessageTemplate;
 
-        private VisualTreeAsset _detailViewAsset; // Placeholder since it's instantiated via lists
         private VisualElement _root;
         private string _currentTicketId;
 
-        // UI elements
+        // UI要素
         private Label _lblTitle;
         private Label _lblStatus;
         private Label _lblCreatedAt;
@@ -26,8 +28,12 @@ namespace AIRegistry.Frontend.Controllers
         private ScrollView _scvChatMessages;
         private TextField _txtMessage;
         private Button _btnSendMsg;
-        private Button _btnBack;
 
+        /// <summary>
+        /// 詳細画面を初期化します。
+        /// </summary>
+        /// <param name="root">詳細画面のルート要素</param>
+        /// <param name="ticketId">対象チケットID</param>
         public void Initialize(VisualElement root, string ticketId)
         {
             _root = root;
@@ -44,9 +50,13 @@ namespace AIRegistry.Frontend.Controllers
             _txtMessage = _root.Q<TextField>("TxtMessage");
             _btnSendMsg = _root.Q<Button>("BtnSendMsg");
 
-            // Assuming Header has a home/back button. We use Home.
+            // ヘッダー内の共通ボタンに対する「戻る」処理
             var btnHome = _root.Q<Button>("BtnHome");
-            if (btnHome != null) btnHome.clicked += GoBackToList;
+            if (btnHome != null)
+            {
+                btnHome.clicked -= GoBackToList;
+                btnHome.clicked += GoBackToList;
+            }
 
             if (_btnSendMsg != null)
             {
@@ -57,43 +67,77 @@ namespace AIRegistry.Frontend.Controllers
             LoadTicketDetails();
         }
 
+        /// <summary>
+        /// オブジェクトが無効になった際のクリーンアップ処理を行います。
+        /// </summary>
         private void OnDisable()
         {
             if (_btnSendMsg != null) _btnSendMsg.clicked -= OnSendChatMessage;
         }
 
+        /// <summary>
+        /// チケットの詳細情報を読み込み、UIに反映します。
+        /// </summary>
         private void LoadTicketDetails()
         {
-            // Fetch mockup ticket based on the list logic API
-            // For MVP, we will just set mock text directly
-            _lblTitle.text = $"Ticket Detail ({_currentTicketId})";
-            _lblStatus.text = "[Open]";
-            _lblDescription.text = "This is a requested feature to add a new network layer.";
-            _lblDiffContent.text = "--- a/old_file.cs\n+++ b/new_file.cs\n@@ -1,3 +1,4 @@\n+ using UnityEngine.Networking;\n- using System.Net;";
-            _lblAiSummary.text = "The code looks okay, but ensure that UnityWebRequest is properly disposed in a `using` block to avoid memory leaks.";
+            // UIのリセット
+            _lblTitle.text = "Loading...";
+            _scvChatMessages.Clear();
 
-            // Add an initial mock AI message
-            AddChatMessage("AI", "Hello! I am the review AI. Do you have any questions about my review?", false);
+            // チケット基本情報の取得
+            ApiClient.Instance.GetTicketDetail(_currentTicketId, (success, ticket) =>
+            {
+                if (success && ticket != null)
+                {
+                    _lblTitle.text = ticket.Title;
+                    _lblStatus.text = $"[{ticket.Status}]";
+                    _lblCreatedAt.text = ticket.CreatedAt;
+                    _lblDescription.text = ticket.Description;
+                    _lblDiffContent.text = ticket.DiffContent;
+                }
+            });
+
+            // AIレビュー結果の取得
+            ApiClient.Instance.GetAiReviewResult(_currentTicketId, (success, result) =>
+            {
+                if (success && result != null)
+                {
+                    _lblAiSummary.text = result.Summary;
+                }
+            });
+
+            // チャットの初期化メッセージ
+            AddChatMessage("AI", "こんにちは！レビューAIです。何か質問はありますか？", false);
         }
 
+        /// <summary>
+        /// チャットメッセージの送信ボタンが押された際の処理です。
+        /// </summary>
         private void OnSendChatMessage()
         {
             string msg = _txtMessage.value;
             if (string.IsNullOrEmpty(msg)) return;
 
-            // Add our own message to the view
-            AddChatMessage("User", msg, true);
+            AddChatMessage("自分", msg, true);
             _txtMessage.value = "";
 
-            // Simulate AI reply (Here you would call ApiClient)
             Invoke(nameof(SimulateAiReply), 1.0f);
         }
 
+        /// <summary>
+        /// AIの返答をシミュレートするためのメソッドです。
+        /// </summary>
         private void SimulateAiReply()
         {
-            AddChatMessage("AI", "I understand. Let me verify that part of the code.", false);
+            AddChatMessage("AI", "ご質問ありがとうございます。そのコード箇所について調査してみますね。", false);
         }
 
+        /// <summary>
+        /// チャット画面にメッセージを追加します。
+        /// </summary>
+        /// <param name="sender">送信者名</param>
+        /// <param name="content">メッセージ内容</param>
+        /// <param name="isSelf">自分自身の発言かどうか</param>
         private void AddChatMessage(string sender, string content, bool isSelf)
         {
             if (_chatMessageTemplate == null || _scvChatMessages == null) return;
@@ -108,27 +152,28 @@ namespace AIRegistry.Frontend.Controllers
             if (isSelf)
             {
                 container.style.alignSelf = Align.FlexEnd;
-                bubble.style.backgroundColor = new StyleColor(ColorUtility.TryParseHtmlString("#1E5128", out var c) ? c : Color.green);
+                bubble.style.backgroundColor = new StyleColor(new Color(0.12f, 0.32f, 0.16f));
             }
             else
             {
                 container.style.alignSelf = Align.FlexStart;
-                bubble.style.backgroundColor = new StyleColor(ColorUtility.TryParseHtmlString("#252526", out var c2) ? c2 : Color.grey);
+                bubble.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
             }
 
             _scvChatMessages.Add(msgEl);
             
-            // Scroll to bottom manually (simple hack for UIElements)
-            _scvChatMessages.schedule.Execute(() => _scvChatMessages.scrollOffset = new Vector2(0, float.MaxValue)).StartingIn(50);
+            _scvChatMessages.schedule.Execute(() => 
+                _scvChatMessages.scrollOffset = new Vector2(0, float.MaxValue)
+            ).StartingIn(50);
         }
 
+        /// <summary>
+        /// チケット一覧画面へ戻ります。
+        /// </summary>
         private void GoBackToList()
         {
-            var presenter = FindObjectOfType<TicketListPresenter>();
-            if (presenter != null)
-            {
-                presenter.GoToList();
-            }
+            // AppFlowManagerに遷移を依頼
+            AppFlowManager.Instance.GoToTicketList();
         }
     }
 }

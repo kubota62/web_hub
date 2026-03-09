@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+        "**/*.meta": true,
+        "Library/": true,
+        "Temp/": true,
+        "Logs/": true,
+        "Obj/": true,
+        "Build/": true,
+        "Builds/": true,
+        "UserSettings/": true,
+        "MemoryCaptures/": true,
+        "**/*.csproj": true,
+        "**/*.sln": true,
+        "**/*.unitypackage": true,
+        "**/*.user": true,
+        "**/*.userprefs": true
+    }
+}

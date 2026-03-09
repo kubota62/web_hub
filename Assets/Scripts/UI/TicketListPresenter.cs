@@ -7,18 +7,22 @@ using AIRegistry.Models;
 
 namespace AIRegistry.Frontend.Controllers
 {
+    /// <summary>
+    /// チケット一覧画面の制御を行うプレゼンタークラスです。
+    /// </summary>
     public class TicketListPresenter : MonoBehaviour
     {
+        [Header("Templates")]
         [SerializeField] private VisualTreeAsset _ticketItemTemplate;
-        [SerializeField] private VisualTreeAsset _createTicketViewAsset;
-        [SerializeField] private VisualTreeAsset _ticketDetailViewAsset;
-        [SerializeField] private VisualTreeAsset _ticketListViewAsset;
 
         private VisualElement _root;
         private ScrollView _scvTicketList;
         private Button _btnCreateTicket;
-        private Button _btnLogout;
 
+        /// <summary>
+        /// UI要素の参照取得とデータの読み込みを開始します。
+        /// </summary>
+        /// <param name="contentRoot">画面のルートとなる要素</param>
         public void Initialize(VisualElement contentRoot)
         {
             _root = contentRoot;
@@ -26,8 +30,6 @@ namespace AIRegistry.Frontend.Controllers
             _scvTicketList = _root.Q<ScrollView>("ScvTicketList");
             _btnCreateTicket = _root.Q<Button>("BtnCreateTicket");
             
-            // Header buttons and duplicates are now handled by AppFlowManager
-            // Note: We leave BtnCreateTicket handled here because it's specific to this view
             if (_btnCreateTicket != null)
             {
                 _btnCreateTicket.clicked -= GoToCreateTicket;
@@ -37,17 +39,17 @@ namespace AIRegistry.Frontend.Controllers
             LoadTickets();
         }
 
-        public void GoToList()
-        {
-            AppFlowManager.Instance.ShowView(_ticketListViewAsset);
-            Initialize(AppFlowManager.Instance.GetComponent<UIDocument>().rootVisualElement.Q("MainContent"));
-        }
-
+        /// <summary>
+        /// オブジェクトが無効になった際のクリーンアップ処理を行います。
+        /// </summary>
         private void OnDisable()
         {
             if (_btnCreateTicket != null) _btnCreateTicket.clicked -= GoToCreateTicket;
         }
 
+        /// <summary>
+        /// チケット一覧データを読み込み、UIに反映します。
+        /// </summary>
         private void LoadTickets()
         {
             if (_scvTicketList == null) return;
@@ -65,11 +67,13 @@ namespace AIRegistry.Frontend.Controllers
                         ticketEl.Q<Label>("LblCreatedAt").text = t.CreatedAt;
 
                         var btnView = ticketEl.Q<Button>("BtnView");
-                        btnView.clicked += () => GoToTicketDetail(t.Id);
+                        if (btnView != null)
+                        {
+                            btnView.clicked += () => GoToTicketDetail(t.Id);
+                        }
 
                         _scvTicketList.Add(ticketEl);
                         
-                        // Add spacing
                         var spacer = new VisualElement();
                         spacer.style.height = 8;
                         _scvTicketList.Add(spacer);
@@ -78,24 +82,23 @@ namespace AIRegistry.Frontend.Controllers
             });
         }
 
+        /// <summary>
+        /// チケット作成画面へ遷移します。
+        /// </summary>
         private void GoToCreateTicket()
         {
-            var presenter = FindObjectOfType<TicketCreatePresenter>();
-            if (presenter != null)
-            {
-                presenter.GoToCreate();
-            }
+            // AppFlowManagerに遷移を依頼
+            AppFlowManager.Instance.GoToTicketCreate();
         }
 
+        /// <summary>
+        /// 指定されたチケットの詳細画面へ遷移します。
+        /// </summary>
+        /// <param name="ticketId">対象チケットのID</param>
         private void GoToTicketDetail(string ticketId)
         {
-            AppFlowManager.Instance.ShowView(_ticketDetailViewAsset);
-            var presenter = FindObjectOfType<TicketDetailPresenter>();
-            if (presenter != null)
-            {
-                presenter.Initialize(AppFlowManager.Instance.GetComponent<UIDocument>().rootVisualElement.Q("MainContent"), ticketId);
-            }
+            // IDを指定してAppFlowManagerに遷移を依頼
+            AppFlowManager.Instance.GoToTicketDetail(ticketId);
         }
-
     }
 }

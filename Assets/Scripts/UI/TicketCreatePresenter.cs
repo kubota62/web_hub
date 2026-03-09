@@ -6,11 +6,11 @@ using AIRegistry.Models;
 
 namespace AIRegistry.Frontend.Controllers
 {
+    /// <summary>
+    /// 新規チケット作成画面のロジックを管理するプレゼンタークラスです。
+    /// </summary>
     public class TicketCreatePresenter : MonoBehaviour
     {
-        [SerializeField] private VisualTreeAsset _ticketListViewAsset;
-
-        [SerializeField] private VisualTreeAsset _createTicketViewAsset;
         private VisualElement _root;
         private TextField _txtTitle;
         private TextField _txtDescription;
@@ -18,7 +18,6 @@ namespace AIRegistry.Frontend.Controllers
         private Button _btnSubmit;
         private Button _btnCancel;
 
-        // Tags and Modal UI
         private VisualElement _tagListContainer;
         private Button _btnAddTag;
         private VisualElement _modalAddTag;
@@ -30,15 +29,10 @@ namespace AIRegistry.Frontend.Controllers
         private List<string> _availableTags = new List<string> { "Bug", "Feature", "Refactor", "Network", "UI" };
         private List<Toggle> _tagToggles = new List<Toggle>();
 
-        public void GoToCreate()
-        {
-            if (_createTicketViewAsset != null)
-            {
-                AppFlowManager.Instance.ShowView(_createTicketViewAsset);
-                Initialize(AppFlowManager.Instance.GetComponent<UIDocument>().rootVisualElement.Q("MainContent"));
-            }
-        }
-
+        /// <summary>
+        /// 新規チケット作成画面の初期化処理を行います。
+        /// </summary>
+        /// <param name="root">画面のルート要素</param>
         public void Initialize(VisualElement root)
         {
             _root = root;
@@ -46,7 +40,6 @@ namespace AIRegistry.Frontend.Controllers
             _txtTitle = _root.Q<TextField>("TxtTitle");
             _txtDescription = _root.Q<TextField>("TxtDescription");
             _txtDiff = _root.Q<TextField>("TxtDiff");
-            
             _btnSubmit = _root.Q<Button>("BtnSubmit");
             _btnCancel = _root.Q<Button>("BtnCancel");
 
@@ -76,6 +69,9 @@ namespace AIRegistry.Frontend.Controllers
             RefreshTagsUI();
         }
 
+        /// <summary>
+        /// タグ一覧の表示を更新します。
+        /// </summary>
         private void RefreshTagsUI()
         {
             if (_tagListContainer == null) return;
@@ -92,6 +88,9 @@ namespace AIRegistry.Frontend.Controllers
             }
         }
 
+        /// <summary>
+        /// タグ追加モーダルを開きます。
+        /// </summary>
         private void OpenTagModal()
         {
             if (_modalAddTag != null)
@@ -102,14 +101,17 @@ namespace AIRegistry.Frontend.Controllers
             }
         }
 
+        /// <summary>
+        /// タグ追加モーダルを閉じます。
+        /// </summary>
         private void CloseTagModal()
         {
-            if (_modalAddTag != null)
-            {
-                _modalAddTag.style.display = DisplayStyle.None;
-            }
+            if (_modalAddTag != null) _modalAddTag.style.display = DisplayStyle.None;
         }
 
+        /// <summary>
+        /// 新しいタグを追加します。
+        /// </summary>
         private void AddNewTag()
         {
             string newTag = _txtNewTagName.value.Trim();
@@ -117,7 +119,7 @@ namespace AIRegistry.Frontend.Controllers
 
             if (_availableTags.Contains(newTag))
             {
-                _lblTagError.text = "Tag already exists.";
+                _lblTagError.text = "そのタグは既に存在します。";
                 _lblTagError.style.display = DisplayStyle.Flex;
                 return;
             }
@@ -125,19 +127,22 @@ namespace AIRegistry.Frontend.Controllers
             _availableTags.Add(newTag);
             RefreshTagsUI();
             
-            // Auto check the newly added tag
-            var lastToggle = _tagToggles[_tagToggles.Count - 1];
-            lastToggle.value = true;
-
+            if (_tagToggles.Count > 0) _tagToggles[_tagToggles.Count - 1].value = true;
             CloseTagModal();
         }
 
+        /// <summary>
+        /// オブジェクトが無効になった際のクリーンアップ処理を行います。
+        /// </summary>
         private void OnDisable()
         {
             if (_btnSubmit != null) _btnSubmit.clicked -= OnSubmitClicked;
             if (_btnCancel != null) _btnCancel.clicked -= GoBackToList;
         }
 
+        /// <summary>
+        /// 提出ボタンが押された際の、チケット作成実行処理です。
+        /// </summary>
         private void OnSubmitClicked()
         {
             string title = _txtTitle.value;
@@ -150,11 +155,7 @@ namespace AIRegistry.Frontend.Controllers
                 if (toggle.value) selectedTags.Add(toggle.text);
             }
 
-            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(diff))
-            {
-                Debug.LogWarning("Title and Diff are required.");
-                return;
-            }
+            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(diff)) return;
 
             _btnSubmit.SetEnabled(false);
 
@@ -171,23 +172,19 @@ namespace AIRegistry.Frontend.Controllers
                 _btnSubmit.SetEnabled(true);
                 if (success)
                 {
-                    Debug.Log($"Ticket Created: {result.Id}");
-                    GoBackToList();
-                }
-                else
-                {
-                    Debug.LogError("Failed to create ticket.");
+                    // AppFlowManagerに一覧への復帰を依頼
+                    AppFlowManager.Instance.GoToTicketList();
                 }
             });
         }
 
+        /// <summary>
+        /// 一覧画面へ戻ります。
+        /// </summary>
         private void GoBackToList()
         {
-            var presenter = FindObjectOfType<TicketListPresenter>();
-            if (presenter != null)
-            {
-                presenter.GoToList();
-            }
+            // AppFlowManagerに一覧への復帰を依頼
+            AppFlowManager.Instance.GoToTicketList();
         }
     }
 }
